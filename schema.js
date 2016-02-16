@@ -19,28 +19,16 @@ const Task = new GraphQLObjectType( {
     fields: () => {
         return {
             id: {
-                type: GraphQLInt,
-                resolve( task ) {
-                    return task.id
-                }
+                type: GraphQLInt
             },
             title: {
-                type: GraphQLString,
-                resolve( task ) {
-                    return task.title
-                }
+                type: GraphQLString
             },
             status: {
-                type: GraphQLBoolean,
-                resolve( task ) {
-                    return task.status
-                }
+                type: GraphQLBoolean
             },
             userId: {
-                type: GraphQLInt,
-                resolve( task ) {
-                    return task.userId
-                }
+                type: GraphQLInt
             },
             user:  {
                 type: User,
@@ -61,16 +49,10 @@ const User = new GraphQLObjectType({
     fields: () => {
         return  {
             id: {
-                type: GraphQLInt,
-                resolve( user ) {
-                    return user.id
-                }
+                type: GraphQLInt
             },
             name: {
-                type: GraphQLString,
-                resolve( user ) {
-                    return user.name
-                }
+                type: GraphQLString
             },
             tasks: {
                 type: new GraphQLList(Task),
