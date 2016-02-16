@@ -7,7 +7,7 @@ npm install
 npm start
 ```
 
-**open browser to http://localhost:8080**
+**open browser to http://localhost:8080/graphql**
 
 -----------
 
