@@ -15,7 +15,7 @@ npm start
 
 ## Graph*i*QL UI
 
-* open browser to http://localhost:3333/graphql**
+* open browser to http://localhost:3333/graphql
 
 -----------
 
