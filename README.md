@@ -7,12 +7,19 @@ npm install
 npm start
 ```
 
-**Simple React Application reading from Grapql
-**Graphiql UI: open browser to http://localhost:3333/graphql**
+
+## GraphQL + React
+
+* open browser to http://localhost:3333/
+* click `React w/ GraphQL`
+
+## Graph*i*QL UI
+
+* open browser to http://localhost:3333/graphql**
 
 -----------
 
-### Things to try in GraphiQL:
+### Things to try in Graph*i*QL:
 
 #### Get all user's id, name
 
