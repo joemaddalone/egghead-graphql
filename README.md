@@ -1,4 +1,4 @@
-##  PLACEHOLDER README
+##  GraphQL
 
 ### Installation
 
@@ -7,7 +7,8 @@ npm install
 npm start
 ```
 
-**open browser to http://localhost:3333/graphql**
+**Simple React Application reading from Grapql
+**Graphiql UI: open browser to http://localhost:3333/graphql**
 
 -----------
 
