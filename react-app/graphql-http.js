@@ -1,19 +1,26 @@
 class GXHR {
-  send(query, cb){
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/graphql');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.onload = function () {
-      var json = null;
-      try {
-        json = JSON.parse(xhr.responseText);
-      } catch(err) {
-        json = {status: xhr.status};
+  send(query){
+    return new Promise((resolve, reject) => {
+      let xhr = new XMLHttpRequest();
+      xhr.open('POST', '/graphql');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.onload = () => {
+        try {
+          return resolve(JSON.parse(xhr.responseText))
+        }
+        catch(err){
+          return reject({status: xhr.status})
+        }
       }
-      cb(json)
-    };
-    xhr.send(JSON.stringify({query}));
+      xhr.send(JSON.stringify({query}))
+    })
+  }
+  query(queryArgs){
+    return this.send(queryArgs)
+  }
+  mutate(mutateArgs){
+    return this.send('mutation ' + mutateArgs)
   }
 }
 

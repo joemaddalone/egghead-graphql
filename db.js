@@ -23,7 +23,7 @@ const db = {
     /**
      * Remove an item by id.
      */
-    removeTasks( id ) {
+    removeTask( id ) {
         this.tasks.splice(
             this.tasks.findIndex( item => item.id === id )
             , 1 );

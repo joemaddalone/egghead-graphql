@@ -3,45 +3,104 @@ import ReactDOM from 'react-dom';
 import GXHR from './graphql-http';
 const gxhr = new GXHR();
 
+/**
+ * User Component
+ */
 class User extends React.Component {
-  addTask(){
+  addTask(e){
+    e.preventDefault();
     this.props.addTask(this.refs.newTask.value, this.props.user.id);
     this.refs.newTask.value = '';
   }
   render(){
     return (
-      <div className="user row">
-        <div className="col-xs-12">
-          <div className="panel panel-info">
-            <div className="panel-heading"><h2>{this.props.user.name}</h2></div>
-            <div className="input-group">
-              <input ref="newTask" type="text" className="form-control" placeholder="Add Task" />
-              <span className="input-group-btn">
-                <button className="btn btn-info" type="button" onClick={this.addTask.bind(this)}>Add Task</button>
-              </span>
-            </div>
-            <Tasks addTask={this.props.addTask} tasks={this.props.user.tasks} userId={this.props.user.id} />
-          </div>
+      <Panel css="panel-info" title={this.props.user.name}>
+        <form onSubmit={this.addTask.bind(this)}>
+          <div className="input-group">
+          <input ref="newTask"
+              type="text"
+              className="form-control"
+              placeholder="enter task title" />
+          <span className="input-group-btn">
+            <Button css="btn-info">Add Task</Button>
+          </span>
         </div>
-      </div>
+        </form>
+        <Tasks
+          addTask={this.props.addTask}
+          removeTask={this.props.removeTask}
+          tasks={this.props.user.tasks}
+          userId={this.props.user.id} />
+      </Panel>
     );
   }
 }
 
+/**
+ * Button Component
+ */
+const Button = (props) =>
+  <button
+    className={'btn ' + props.css}
+    onClick={props.clickHandler}>
+      {props.children}
+  </button>
+
+/**
+ * Panel Component
+ */
+const Panel = (props) =>
+  <div className="user row">
+    <div className="col-xs-12">
+      <div className={'panel ' + props.css}>
+      <div className="panel-heading"><h2>{props.title}</h2></div>
+        {props.children}
+      </div>
+    </div>
+  </div>
+
+
+/**
+ * Tasks Component
+ */
 class Tasks extends React.Component {
   render(){
     return (
-      <ul className="list-group">
-        {this.props.tasks.map(task => <Task key={task.id} task={task} />)}
-      </ul>
+      <table className="table table-hover">
+        <tbody>
+        {this.props.tasks.map(task => <Task
+          removeTask={this.props.removeTask}
+          key={task.id}
+          task={task} />
+        )}
+        </tbody>
+      </table>
     )
   }
 }
 
+/**
+ * Task Component
+ */
 const Task = (props) =>
-    <li className="list-group-item">{props.task.title}</li>
+    <tr>
+      <td className="col-xs-1">
+        <Button
+          clickHandler={props.removeTask.bind(null, props.task.id)}
+          css="btn-xs btn-danger">
+          <span
+            className="glyphicon glyphicon-glyphicon glyphicon-remove-circle">
+          </span>
+        </Button>
+      </td>
+      <td className="col-xs-11">
+        {props.task.title}
+      </td>
+    </tr>
 
-
+/**
+ * App Component
+ */
 class App extends React.Component {
   constructor(){
     super();
@@ -52,48 +111,70 @@ class App extends React.Component {
   }
 
   getUsers(){
-    gxhr.send(`{users {id,name, tasks{id, title}}}`, (json) => {
-      if(json.data){
-        this.setState({users: json.data.users})
-      }
-    });
+    gxhr.query(`{users {id,name, tasks{id, title}}}`).then(
+      json => this.setState({users: json.data.users}),
+      json => console.log('ERROR')
+    )
   }
 
-  addUser(){
+  addUser(e){
+    e.preventDefault();
     let val = this.refs.newUser.value;
-    let query =  `mutation {addUser(name: "${val}") {id}}`
-     gxhr.send(query, (json) => {
-        if(json.data){
-          this.refs.newUser.value = '';
-          this.getUsers();
-        }
-      });
+    if(val){
+      gxhr.mutate(`{addUser(name: "${val}") {id}}`).then(
+        json => {this.refs.newUser.value = ''; this.getUsers()},
+        json => console.log('ERROR')
+      )
+    }
+    else {
+      alert('User name required')
+    }
+
   }
 
   addTask(title, userId){
-    let val = this.refs.newUser.value;
-    let query =  `mutation {addTask(title: "${title}", userId: ${userId}) {id}}`
-     gxhr.send(query, (json) => {
-        if(json.data){
-          this.refs.newUser.value = '';
-          this.getUsers();
-        }
-      });
+    if(title){
+      gxhr.mutate(`{addTask(title: "${title}", userId: ${userId}) {id}}`).then(
+        json => this.getUsers(),
+        json => console.log('ERROR')
+      )
+    }
+    else {
+      alert('Task title required')
+    }
+
+  }
+
+  removeTask(taskId){
+    gxhr.mutate(`{removeTask(id: ${taskId}) {id}}`).then(
+      json => this.getUsers(),
+      json => console.log('ERROR')
+    )
   }
 
   render(){
     return (
       <div>
-        {this.state.users.map(user => <User addTask={this.addTask.bind(this)} key={user.id} user={user} />)}
-        <div className="panel panel-success">
-            <div className="panel-heading"><h4>Add New User</h4></div>
+        {this.state.users.map(user => <User
+            addTask={this.addTask.bind(this)}
+            removeTask={this.removeTask.bind(this)}
+            key={user.id}
+            user={user} />
+        )}
+        <Panel css="panel-success" title="Add New User">
+          <form onSubmit={this.addUser.bind(this)}>
             <div className="input-group">
-            <input ref="newUser" type="text" className="form-control" placeholder="Add User" />
-              <span className="input-group-btn">
-                <button className="btn btn-success" type="button" onClick={this.addUser.bind(this)}>Add User</button>
-              </span>
-          </div>
-        </div>
+              <input
+                ref="newUser"
+                type="text"
+                className="form-control"
+                placeholder="enter user name" />
+                <span className="input-group-btn">
+                  <Button css="btn-success">Add User</Button>
+                </span>
+            </div>
+          </form>
+        </Panel>
       </div>
     );
   }
