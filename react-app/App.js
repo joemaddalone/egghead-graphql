@@ -113,7 +113,7 @@ class App extends React.Component {
   getUsers(){
     gxhr.query(`{users {id,name, tasks{id, title}}}`).then(
       json => this.setState({users: json.data.users}),
-      json => console.log('ERROR')
+      json => console.error(json)
     )
   }
 
@@ -123,7 +123,7 @@ class App extends React.Component {
     if(val){
       gxhr.mutate(`{addUser(name: "${val}") {id}}`).then(
         json => {this.refs.newUser.value = ''; this.getUsers()},
-        json => console.log('ERROR')
+        json => console.error(json)
       )
     }
     else {
@@ -136,7 +136,7 @@ class App extends React.Component {
     if(title){
       gxhr.mutate(`{addTask(title: "${title}", userId: ${userId}) {id}}`).then(
         json => this.getUsers(),
-        json => console.log('ERROR')
+        json => console.error(json)
       )
     }
     else {
@@ -148,7 +148,7 @@ class App extends React.Component {
   removeTask(taskId){
     gxhr.mutate(`{removeTask(id: ${taskId}) {id}}`).then(
       json => this.getUsers(),
-      json => console.log('ERROR')
+      json => console.error(json)
     )
   }
 

@@ -7,7 +7,13 @@ class GXHR {
       xhr.setRequestHeader('Accept', 'application/json');
       xhr.onload = () => {
         try {
-          return resolve(JSON.parse(xhr.responseText))
+          let json = JSON.parse(xhr.responseText)
+          if(json.errors){
+            return reject(json)
+          }
+          else {
+            return resolve(json)
+          }
         }
         catch(err){
           return reject({status: xhr.status})
