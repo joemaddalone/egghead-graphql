@@ -16,7 +16,7 @@ const db = {
     findTasks( args ){
         if ( args ) {
             return this.tasks.filter( item =>
-                Object.keys( args ).every( key => args[key] === item[key] ) );
+                Object.keys( args ).every( key => args[ key ] === item[ key ] ) );
         }
         return this.tasks;
     },
@@ -40,7 +40,7 @@ const db = {
             status: false
         };
         this.tasks.push( item );
-        return this.tasks[this.tasks.length - 1];
+        return this.tasks[ this.tasks.length - 1 ];
     },
     /**
      * Update an item.
@@ -48,7 +48,7 @@ const db = {
     updateTask( args ){
         var task = this.getTask( args.id );
         delete args.id;
-        Object.keys( args ).forEach( key => task[key] = args[key] )
+        Object.keys( args ).forEach( key => task[ key ] = args[ key ] )
         return task;
     },
     /**
@@ -60,13 +60,13 @@ const db = {
     /**
      * Add a new user
      */
-    addUser(newUser){
-      var user = {
+    addUser( newUser ){
+        var user = {
             id: nextUserId++,
             name: newUser.name
         };
         this.users.push( user );
-        return this.users[this.users.length - 1];
+        return this.users[ this.users.length - 1 ];
     },
     /**
      * Find a user by id.
@@ -74,7 +74,7 @@ const db = {
     findUsers( args ){
         if ( args ) {
             return this.users.filter( user =>
-                Object.keys( args ).every( key => args[key] === user[key] ));
+                Object.keys( args ).every( key => args[ key ] === user[ key ] ) );
         }
         return this.users;
     }
@@ -83,9 +83,9 @@ const db = {
 /**
  * initialize our pseudo database with some data
  */
-db.addUser({name: 'Abe Bell'});
-db.addUser({name: 'Chad Dim'});
-db.addTask( {userId: 1, title: 'Get haircut'} );
-db.addTask( {userId: 2, title: 'Get real job'} );
+db.addUser( { name: 'Abe Bell' } );
+db.addUser( { name: 'Chad Dim' } );
+db.addTask( { userId: 1, title: 'Get haircut' } );
+db.addTask( { userId: 2, title: 'Get real job' } );
 
 export default db;

@@ -62,7 +62,7 @@ const User = new GraphQLObjectType({
             }
         }
     }
-})
+});
 
 /**
  * Single endpoint for our public api with sub-endpoints: users & tasks
