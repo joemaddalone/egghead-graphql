@@ -12,12 +12,17 @@ class User extends React.Component {
     }
 
     render() {
+        console.log('PROPS' + this.props)
         return (
-            <Panel css="panel-info" title={this.props.user.name}>
+            <Panel css="panel-info"
+                   title={this.props.user.name}
+                   removeUser={this.props.removeUser}
+                   userId={this.props.user.id}
+            >
                 <InputGroup
                     ref="newTask"
                     placeholder="enter task title"
-                    submitHandler={this.addTask.bind(this)}
+                    submitHandler={this.addTask.bind( this )}
                     btnText="Add Task"/>
                 <Tasks
                     addTask={this.props.addTask}
@@ -28,7 +33,9 @@ class User extends React.Component {
         );
     }
 }
-
+/**
+ * Input Group Component
+ */
 class InputGroup extends React.Component {
     constructor() {
         super();
@@ -42,14 +49,14 @@ class InputGroup extends React.Component {
 
     render() {
         return (
-            <form onSubmit={this.submitHandler.bind(this)}>
+            <form onSubmit={this.submitHandler.bind( this )}>
                 <div className="input-group">
                     <input
                         ref="inputField"
                         type="text"
                         className="form-control"
                         placeholder={this.props.placeholder}/>
-          <span className="input-group-btn">
+                    <span className="input-group-btn">
             <Button css="btn-info">{this.props.btnText}</Button>
           </span>
                 </div>
@@ -67,7 +74,7 @@ const Button = ( props ) =>
         className={'btn ' + props.css}
         onClick={props.clickHandler}>
         {props.children}
-    </button>
+    </button>;
 
 /**
  * Panel Component
@@ -76,7 +83,19 @@ const Panel = ( props ) =>
     <div className="user row">
         <div className="col-xs-12">
             <div className={'panel ' + props.css}>
-                <div className="panel-heading"><h2>{props.title}</h2></div>
+                <div className="panel-heading">
+                    <h2>
+                        {props.title}
+                        {props.removeUser &&
+                        <div className="pull-right">
+                            <DeleteButton
+                                removeFunction={props.removeUser}
+                                removeId={props.userId}/>
+                        </div>}
+
+
+                    </h2>
+                </div>
                 {props.children}
             </div>
         </div>
@@ -108,18 +127,28 @@ class Tasks extends React.Component {
 const Task = ( props ) =>
     <tr>
         <td className="col-xs-1">
-            <Button
-                clickHandler={props.removeTask.bind(null, props.task.id)}
-                css="btn-xs btn-danger">
-          <span
-              className="glyphicon glyphicon-glyphicon glyphicon-remove-circle">
-          </span>
-            </Button>
+            <DeleteButton
+                removeFunction={props.removeTask}
+                removeId={props.task.id}
+            />
         </td>
         <td className="col-xs-11">
             {props.task.title}
         </td>
     </tr>;
+
+/**
+ * Delete Button Component
+ */
+const DeleteButton = ( props ) =>
+    <Button
+        clickHandler={props.removeFunction.bind( null, props.removeId )}
+        css="btn-xs btn-danger">
+          <span
+              className="glyphicon glyphicon-glyphicon glyphicon-remove-circle">
+          </span>
+    </Button>;
+
 
 /**
  * App Component
@@ -155,6 +184,13 @@ class App extends React.Component {
 
     }
 
+    removeUser( userId ) {
+        gxhr.mutate( `{removeUser(id: ${userId}) {id}}` ).then(
+            this.getUsers.bind( this ),
+            json => console.error( json )
+        );
+    }
+
     addTask( title, userId ) {
         if ( title ) {
             gxhr.mutate( `{addTask(title: "${title}", userId: ${userId}) {id}}` ).then(
@@ -179,8 +215,9 @@ class App extends React.Component {
         return (
             <div>
                 {this.state.users.map( user => <User
-                    addTask={this.addTask.bind(this)}
-                    removeTask={this.removeTask.bind(this)}
+                    addTask={this.addTask.bind( this )}
+                    removeTask={this.removeTask.bind( this )}
+                    removeUser={this.removeUser.bind( this )}
                     key={user.id}
                     user={user}/>
                 )}
@@ -188,7 +225,7 @@ class App extends React.Component {
                     <InputGroup
                         ref="newUser"
                         placeholder="enter user name"
-                        submitHandler={this.addUser.bind(this)}
+                        submitHandler={this.addUser.bind( this )}
                         btnText="Add User"/>
                 </Panel>
             </div>

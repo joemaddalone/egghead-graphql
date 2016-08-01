@@ -172,6 +172,18 @@ const Mutation = new GraphQLObjectType( {
                     return db.addUser( args )
                 }
             },
+            removeUser: {
+                description: 'Removes a user.',
+                type: User,
+                args: {
+                    id: {
+                        type: new GraphQLNonNull( GraphQLInt )
+                    }
+                },
+                resolve ( root, args ) {
+                    return db.removeUser( args.id )
+                }
+            },
         };
     }
 } );

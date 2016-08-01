@@ -58,6 +58,26 @@ const db = {
         return this.users.find( user => user.id === id );
     },
     /**
+     * Find a user by id.
+     */
+    findUsers( args ){
+        if ( args ) {
+            return this.users.filter( user =>
+                Object.keys( args ).every( key => args[ key ] === user[ key ] ) );
+        }
+        return this.users;
+    },
+    /**
+     * Remove a user by id
+     */
+    removeUser( id ) {
+        this.users.splice(
+            this.users.findIndex( user => user.id === id )
+            , 1 );
+        this.tasks = this.tasks.filter(task => task.userId !== id)
+        return null
+    },
+    /**
      * Add a new user
      */
     addUser( newUser ){
@@ -69,15 +89,15 @@ const db = {
         return this.users[ this.users.length - 1 ];
     },
     /**
-     * Find a user by id.
+     * Update a user.
      */
-    findUsers( args ){
-        if ( args ) {
-            return this.users.filter( user =>
-                Object.keys( args ).every( key => args[ key ] === user[ key ] ) );
-        }
-        return this.users;
+    updateUser( args ){
+        var user = this.getUser( args.id );
+        delete args.id;
+        Object.keys( args ).forEach( key => user[ key ] = args[ key ] )
+        return user;
     }
+
 }
 
 /**
